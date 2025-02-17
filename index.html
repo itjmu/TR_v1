@@ -4,36 +4,284 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тасбих-счётчик</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* CSS стили объединены в один файл */
+        /* ########## СТИЛИ МЕНЮ ########## */
+        .menu-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1001;
+            color: white;
+            text-shadow: 0 0 3px rgba(0,0,0,0.5);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background: rgba(40, 40, 40, 0.95);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+            transition: 0.3s;
+            z-index: 1002;
+            color: white;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #555;
+        }
+
+        .menu-items {
+            list-style: none;
+            padding: 0;
+        }
+
+        .menu-items li a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #fff;
+            transition: background 0.3s;
+        }
+
+        .menu-items li a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1001;
+        }
+
+        /* ########## ОСНОВНЫЕ СТИЛИ ########## */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .top-link {
+            position: fixed;
+            top: 10px;
+            right: 5px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            z-index: 1000;
+        }
+
+        .top-link:hover {
+            background: rgba(0,0,0,0.3);
+        }
+
+        .level-container {
+            width: 40%;
+            margin-bottom: 15px;
+            margin-left: 20px;
+            margin-right: auto;
+        }
+
+        .level-bar {
+            height: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 9px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-progress {
+            height: 100%;
+            background: #66ffCC;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .level-text {
+            position: absolute;
+            top: 40%;
+            left: 40%;
+            transform: translate(-40%, -40%);
+            font-weight: bold;
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .main-progress-container {
+            width: 90%;
+            margin-bottom: 250px;
+            transition: margin 0.3s;
+        }
+
+        .main-progress-bar {
+            height: 60px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-progress {
+            height: 100%;
+            background: #4CAF50;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .main-counter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .zikr-container {
+            margin-bottom: 100px;
+        }
+
+        .zikr-button {
+            font-size: 170px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .zikr-text {
+            position: absolute;
+            font-size: 20px;
+            color: #4CAF50;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(76,175,80,0.5);
+            left: 50%;
+            transform: translateX(-50%);
+            transition: font-size 0.2s;
+            width: 150%;
+            max-width: 550px;
+            text-align: center;
+            white-space: normal;
+            word-wrap: break-word;
+            bottom: 260px;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+        }
+
+        .zikr-button:active {
+            transform: scale(1.1);
+        }
+
+        .zikr-button:active .zikr-text {
+            font-size: 22px;
+        }
+
+        .reset-container {
+            position: fixed;
+            left: 20px;
+            bottom: 5%;
+        }
+
+        #reset {
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        #reset:hover {
+            background: #c82333;
+        }
+
+        .total-counter {
+            position: fixed;
+            bottom: 5%;
+            right: 20px;
+            background: rgba(0,0,0,0.4);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80%;
+                left: -80%;
+            }
+            .sidebar.active ~ .main-progress-container {
+                margin-left: 80%;
+            }
+        }
+    </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <a href="https://t.me/Tasbih_ru" class="telegram-link" target="_blank">☪️ Tasbih Reward</a>
+    <!-- Меню -->
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    <div class="sidebar" id="sidebar">
+        <div class="menu-header">
+            <h3>Меню</h3>
+            <span onclick="toggleMenu()">×</span>
+        </div>
+        <ul class="menu-items">
+            <li><a href="#home">Главная</a></li>
+            <li><a href="#settings">Настройки</a></li>
+            <li><a href="#profile">Профиль</a></li>
+        </ul>
+    </div>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
-    <div class="click-area">
-        <div class="container">
-            <!-- Индикатор уровня -->
-            <div class="level-container">
-                <div class="level-bar">
-                    <div class="level-progress"></div>
-                    <div class="level-text">Уровень <span id="level">1</span> из 5</div>
-                </div>
-            </div>
+    <a href="https://t.me/Tasbih_ru" class="top-link" target="_blank">☪️ Tasbih Reward</a>
 
-            <!-- Основной индикатор -->
-            <div class="main-progress-container">
-                <div class="main-progress-bar">
-                    <div class="main-progress"></div>
-                    <div class="main-counter"><span id="count">0</span>/33</div>
-                </div>
-            </div>
+    <div class="level-container">
+        <div class="level-bar">
+            <div class="level-progress"></div>
+            <div class="level-text">Уровень <span id="level">1</span> из 5</div>
+        </div>
+    </div>
 
-            <!-- Кнопка зикра -->
-            <div class="zikr-container">
-                <div class="zikr-button">
-                    📿
-                    <div class="zikr-text" id="zikr-text">СубhaналЛoh</div>
-                </div>
-            </div>
+    <div class="main-progress-container">
+        <div class="main-progress-bar">
+            <div class="main-progress"></div>
+            <div class="main-counter"><span id="count">0</span>/33</div>
+        </div>
+    </div>
+
+    <div class="zikr-container">
+        <div class="zikr-button">
+            📿
+            <div class="zikr-text" id="zikr-text">Субханаллах</div>
         </div>
     </div>
 
@@ -45,6 +293,102 @@
         Общий счёт: <span id="total-count">0</span>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Настройки
+        const SETTINGS = {
+            zikrList: [
+                "СубhаналЛоh",
+                "АлhамдулилЛah",
+                "Аллоhу Акбар",
+                "Ла илАhа иллалЛоh", 
+                "АстагфирулЛoh", 
+                "СубhаналЛоhи ва баhамдиhиhи", 
+                "Ла илаha илла-лЛоhу ваhдаhу ла шарика лаh. Лаhул мулку ва лаhу-л haмда ва hува ъала кулли шайин Qадир" 
+            ],
+            levels: [
+                {required: 3500, level: 1},
+                {required: 7000, level: 2},
+                {required: 14000, level: 3},
+                {required: 30000, level: 4},
+                {required: 50000, level: 5}
+            ]
+        };
+
+        let appData = JSON.parse(localStorage.getItem('tasbihData')) || {
+            count: 0,
+            totalCount: 0,
+            currentZikrIndex: 0
+        };
+
+        const tg = window.Telegram.WebApp;
+
+        // Функции меню
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        document.getElementById('overlay').addEventListener('click', toggleMenu);
+
+        // Основная логика
+        function saveData() {
+            localStorage.setItem('tasbihData', JSON.stringify(appData));
+            if(tg?.sendData) {
+                tg.sendData(JSON.stringify(appData));
+            }
+        }
+
+        function updateDisplays() {
+            document.getElementById('count').textContent = appData.count;
+            document.getElementById('total-count').textContent = appData.totalCount;
+            document.getElementById('zikr-text').textContent = 
+                SETTINGS.zikrList[appData.currentZikrIndex];
+            
+            document.querySelector('.main-progress').style.width = 
+                `${(appData.count/33)*100}%`;
+            document.querySelector('.level-progress').style.width = 
+                `${calculateLevelProgress()}%`;
+        }
+
+        function calculateLevelProgress() {
+            const currentLevel = SETTINGS.levels.find(l => appData.totalCount < l.required) || {level: 5};
+            document.getElementById('level').textContent = currentLevel.level;
+            const prevLevel = SETTINGS.levels[currentLevel.level-2] || {required: 0};
+            return ((appData.totalCount - prevLevel.required)/(currentLevel.required - prevLevel.required))*100 || 100;
+        }
+
+        document.addEventListener('click', (e) => {
+            if(!e.target.closest('#reset') && !e.target.closest('.menu-btn')) {
+                if(document.getElementById('sidebar').classList.contains('active')) {
+                    toggleMenu();
+                }
+                
+                appData.count++;
+                appData.totalCount++;
+                
+                if(appData.count === 33) {
+                    appData.count = 0;
+                    appData.currentZikrIndex = (appData.currentZikrIndex + 1) % SETTINGS.zikrList.length;
+                }
+                
+                updateDisplays();
+                saveData();
+            }
+        });
+
+        document.getElementById('reset').addEventListener('click', () => {
+            appData.count = 0;
+            appData.currentZikrIndex = 0;
+            updateDisplays();
+            saveData();
+        });
+
+        // Инициализация
+        tg.ready();
+        tg.expand();
+        updateDisplays();
+    </script>
 </body>
 </html>
