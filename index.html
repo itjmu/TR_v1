@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тасбих-счётчик</title>
+    <title>Tasbih Counter PRO</title>
     <style>
-        /* Основные стили */
+        /* ========== ОСНОВНЫЕ СТИЛИ ========== */
         body {
             font-family: 'Arial', sans-serif;
-            background-image: url('background.jpg');
-            background-size: cover;
-            background-position: center;
+            background: url('background.jpg') center/cover no-repeat;
             margin: 0;
             height: 100vh;
             display: flex;
@@ -20,29 +18,28 @@
             color: #fff;
         }
 
-        /* Стили меню */
+        /* ========== СТИЛИ МЕНЮ ========== */
         .menu-btn {
             position: fixed;
-            top: 10px;
-            left: 10px;
-            font-size: 24px;
+            top: 15px;
+            left: 15px;
+            font-size: 28px;
             cursor: pointer;
-            z-index: 1001;
-            color: white;
-            text-shadow: 0 0 3px rgba(0,0,0,0.5);
+            z-index: 1000;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .sidebar {
             position: fixed;
-            left: -50%;
+            left: -300px;
             top: 0;
-            width: 50%;
-            height: 50%;
-            background: rgba(40, 40, 40, 0.95);
-            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-            transition: 0.3s;
-            z-index: 1002;
-            color: white;
+            width: 280px;
+            height: 100%;
+            background: rgba(40, 40, 40, 0.98);
+            box-shadow: 3px 0 10px rgba(0,0,0,0.2);
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1001;
+            overflow-y: auto;
         }
 
         .sidebar.active {
@@ -50,373 +47,311 @@
         }
 
         .menu-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             display: flex;
             justify-content: space-between;
-            padding: 20px;
-            border-bottom: 1px solid #555;
+            align-items: center;
         }
 
         .menu-items {
             list-style: none;
-            padding: 0;
+            padding: 15px 0;
         }
 
-        .menu-items li a {
+        .menu-items a {
             display: block;
-            padding: 15px 20px;
-            text-decoration: none;
+            padding: 15px 25px;
             color: #fff;
-            transition: background 0.3s;
+            text-decoration: none;
+            transition: all 0.3s;
         }
 
-        .menu-items li a:hover {
-            background: rgba(255,255,255,0.1);
+        .menu-items a:hover {
+            background: rgba(255,255,255,0.05);
+            transform: translateX(5px);
         }
 
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
-            width: 50%;
-            height: 50%;
+            width: 100%;
+            height: 100%;
             background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(3px);
             display: none;
-            z-index: 1001;
+            z-index: 999;
         }
 
-        /* Стили статистики */
+        /* ========== СТИЛИ СЧЕТЧИКОВ ========== */
+        .counters-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 900;
+        }
+
+        .counter {
+            background: rgba(0,0,0,0.4);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            min-width: 160px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        /* ========== ПРОГРЕСС-БАРЫ ========== */
+        .progress-container {
+            width: 90%;
+            margin: 20px 0 150px;
+        }
+
+        .progress-bar {
+            height: 60px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* ========== СТИЛИ СТАТИСТИКИ ========== */
         .stats-modal {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.9);
-            padding: 20px;
-            border-radius: 15px;
+            background: rgba(0,0,0,0.95);
             width: 90%;
             max-width: 500px;
-            z-index: 1003;
-            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            z-index: 1002;
+            color: #fff;
         }
 
-        .stats-content {
-            position: relative;
-        }
-
-        .close-stats {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 28px;
-            cursor: pointer;
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
         .stats-tabs {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 20px;
         }
 
         .tab {
             flex: 1;
             padding: 10px;
-            background: #333;
             border: none;
-            color: white;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border-radius: 8px;
             cursor: pointer;
-            border-radius: 5px;
+            transition: all 0.3s;
         }
 
         .tab.active {
             background: #4CAF50;
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .chart-bar {
-            height: 20px;
-            background: #333;
-            border-radius: 10px;
-            margin: 15px 0;
+        .chart {
+            height: 150px;
+            margin: 20px 0;
             position: relative;
         }
 
-        .chart-bar::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            background: #4CAF50;
-            border-radius: 10px;
-            transition: width 0.5s ease;
+        /* ========== АДАПТИВНОСТЬ ========== */
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 85%;
+                left: -85%;
+            }
+            
+            .counter {
+                font-size: 13px;
+                min-width: 140px;
+            }
         }
-
-        /* Остальные стили... */
     </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <!-- Меню -->
+    <!-- Основное меню -->
     <div class="menu-btn">☰</div>
-    <div class="sidebar" id="sidebar">
+    <div class="sidebar">
         <div class="menu-header">
-            <h3>Меню WebApp</h3>
+            <h3>Tasbih PRO</h3>
             <span class="close-btn">×</span>
         </div>
         <ul class="menu-items">
-            <li><a href="https://t.me/Tasbih_rubot?start=m1">📱 Главная</a></li>
-            <li><a href="https://t.me/inut_islam">⚙️ Настройки</a></li>
-            <li><a href="#profile">🪪 Профиль</a></li>
-            <li><a href="#stats" class="stats-link">📊 Статистика</a></li>
-            <li><a href="#qr">❔ Пройти тест 🎁</a></li>
-            <li><a href="#help">🆘 Помощь</a></li>
-            <li><a href="#" onclick="resetTotalCount()">🚫 Сбросить общий счёт</a></li>
+            <li><a href="#home">🏠 Главная</a></li>
+            <li><a href="#stats">📊 Статистика</a></li>
+            <li><a href="#settings">⚙️ Настройки</a></li>
+            <li><a href="#reset-all">🔄 Сбросить всё</a></li>
+            <li><a href="#help">❓ Помощь</a></li>
         </ul>
     </div>
-    <div class="overlay" id="overlay"></div>
+    <div class="overlay"></div>
 
     <!-- Модальное окно статистики -->
-    <div id="stats-modal" class="stats-modal">
-        <div class="stats-content">
-            <span class="close-stats">&times;</span>
-            <div class="stats-tabs">
-                <button class="tab active" data-tab="daily">День</button>
-                <button class="tab" data-tab="weekly">Неделя</button>
-                <button class="tab" data-tab="total">Все время</button>
-            </div>
-            
-            <div id="daily-stats" class="tab-content active">
-                <h3>Ежедневная статистика</h3>
-                <div class="chart-bar"></div>
-                <p>Сегодня: <span id="today-count">0</span></p>
-            </div>
-
-            <div id="weekly-stats" class="tab-content">
-                <h3>Недельная статистика</h3>
-                <div class="chart-bar weekly-chart"></div>
-                <p>За неделю: <span id="week-count">0</span></p>
-            </div>
-
-            <div id="total-stats" class="tab-content">
-                <h3>Общая статистика</h3>
-                <div class="chart-bar total-chart"></div>
-                <p>Всего: <span id="total-stats-count">0</span></p>
-            </div>
+    <div class="stats-modal">
+        <div class="stats-header">
+            <h3>Подробная статистика</h3>
+            <span class="close-stats">×</span>
+        </div>
+        <div class="stats-tabs">
+            <button class="tab active" data-period="day">День</button>
+            <button class="tab" data-period="week">Неделя</button>
+            <button class="tab" data-period="total">Все время</button>
+        </div>
+        <div class="chart" id="stats-chart"></div>
+        <div class="stats-info">
+            <p>Текущее значение: <span id="current-count">0</span></p>
+            <p>Максимум: <span id="max-count">0</span></p>
         </div>
     </div>
 
-    <!-- Основной контент -->
-    <a href="https://t.me/Tasbih_ru" class="top-link" target="_blank">☪️ Tasbih Reward</a>
-
-    <div class="level-container">
-        <div class="level-bar">
-            <div class="level-progress"></div>
-            <div class="level-text">Уровень <span id="level">1</span> из 5</div>
+    <!-- Основной интерфейс -->
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+            <div class="progress-text"><span id="count">0</span>/33</div>
         </div>
     </div>
 
-    <div class="main-progress-container">
-        <div class="main-progress-bar">
-            <div class="main-progress"></div>
-            <div class="main-counter"><span id="count">0</span>/33</div>
-        </div>
+    <div class="zikr-button">
+        📿
+        <div class="zikr-text" id="zikr-text">Субханаллах</div>
     </div>
 
-    <div class="zikr-container">
-        <div class="zikr-button">
-            📿
-            <div class="zikr-text" id="zikr-text">Субханаллах</div>
+    <!-- Панель счетчиков -->
+    <div class="counters-panel">
+        <div class="counter daily-counter">
+            Сегодня: <span id="daily-count">0</span>
         </div>
-    </div>
-
-    <div class="reset-container">
-        <button id="reset">⭕</button>
-    </div>
-
-    <div class="counters-container">
-        <div class="daily-counter">
-            Ежедневный счёт: <span id="daily-count">0</span>
-        </div>
-        <div class="total-counter">
-            Общий счёт: <span id="total-count">0</span>
+        <div class="counter total-counter">
+            Всего: <span id="total-count">0</span>
         </div>
     </div>
 
     <script>
-        // Настройки
-        const SETTINGS = {
-            zikrList: [
-                "СубhаналЛоh",
-                "АлhамдулилЛah",
-                "Аллоhу Акбар",
-                "Ла илАhа иллалЛоh", 
-                "АстагфирулЛoh", 
-                "СубhаналЛоhи ва баhамдиhиhи", 
-                "Ла илаha илла-лЛоhу ваhдаhу ла шарика лаh. Лаhул мулку ва лаhу-л haмда ва hува ъала кулли шайин Qадир" 
-            ],
-            levels: [
-                {required: 3500, level: 1},
-                {required: 7000, level: 2},
-                {required: 14000, level: 3},
-                {required: 30000, level: 4},
-                {required: 50000, level: 5}
-            ]
-        };
-
+        // Инициализация данных
         let appData = JSON.parse(localStorage.getItem('tasbihData')) || {
             count: 0,
             totalCount: 0,
             dailyCount: 0,
-            currentZikrIndex: 0,
-            lastUpdate: new Date().toISOString().split('T')[0],
+            currentZikr: 0,
+            lastUpdate: new Date().toDateString(),
             history: []
         };
 
+        // Конфигурация
+        const CONFIG = {
+            zikr: [
+                "Субханаллах",
+                "Альхамдулиллях",
+                "Аллаху Акбар",
+                "Ля иляха илляллах",
+                "Астагфируллах",
+                "Субханаллахи ва бихамдихи",
+                "Ля хауля ва ля куввата илля биллях"
+            ],
+            levels: [1000, 5000, 15000, 30000, 50000]
+        };
+
+        // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
 
-        // Функции меню
+        // Элементы интерфейса
+        const elements = {
+            menu: document.querySelector('.sidebar'),
+            overlay: document.querySelector('.overlay'),
+            statsModal: document.querySelector('.stats-modal'),
+            progressFill: document.querySelector('.progress-fill'),
+            countDisplay: document.getElementById('count'),
+            dailyCount: document.getElementById('daily-count'),
+            totalCount: document.getElementById('total-count'),
+            zikrText: document.getElementById('zikr-text')
+        };
+
+        // Управление меню
         function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
+            elements.menu.classList.toggle('active');
+            elements.overlay.style.display = elements.menu.classList.contains('active') ? 'block' : 'none';
         }
 
-        document.querySelector('.menu-btn').addEventListener('click', toggleMenu);
-        document.querySelector('.close-btn').addEventListener('click', toggleMenu);
-        document.getElementById('overlay').addEventListener('click', toggleMenu);
-
-        // Основная логика
-        function saveData() {
-            localStorage.setItem('tasbihData', JSON.stringify(appData));
-            if(tg?.sendData) {
-                tg.sendData(JSON.stringify(appData));
-            }
-        }
-
-        function updateDisplays() {
-            const today = new Date().toISOString().split('T')[0];
-            if(appData.lastUpdate !== today) {
+        // Обновление интерфейса
+        function updateUI() {
+            // Проверка смены дня
+            const today = new Date().toDateString();
+            if(today !== appData.lastUpdate) {
                 appData.dailyCount = 0;
                 appData.lastUpdate = today;
-                saveData();
             }
 
-            document.getElementById('count').textContent = appData.count;
-            document.getElementById('total-count').textContent = appData.totalCount;
-            document.getElementById('daily-count').textContent = appData.dailyCount;
-            document.getElementById('zikr-text').textContent = 
-                SETTINGS.zikrList[appData.currentZikrIndex];
-            
-            document.querySelector('.main-progress').style.width = 
-                `${(appData.count/33)*100}%`;
-            document.querySelector('.level-progress').style.width = 
-                `${calculateLevelProgress()}%`;
+            // Обновление значений
+            elements.countDisplay.textContent = appData.count;
+            elements.dailyCount.textContent = appData.dailyCount;
+            elements.totalCount.textContent = appData.totalCount;
+            elements.zikrText.textContent = CONFIG.zikr[appData.currentZikr];
+            elements.progressFill.style.width = `${(appData.count/33)*100}%`;
+
+            // Сохранение данных
+            localStorage.setItem('tasbihData', JSON.stringify(appData));
+            if(tg.sendData) tg.sendData(JSON.stringify(appData));
         }
 
-        function calculateLevelProgress() {
-            const currentLevel = SETTINGS.levels.find(l => appData.totalCount < l.required) || {level: 5};
-            document.getElementById('level').textContent = currentLevel.level;
-            const prevLevel = SETTINGS.levels[currentLevel.level-2] || {required: 0};
-            return ((appData.totalCount - prevLevel.required)/(currentLevel.required - prevLevel.required))*100 || 100;
-        }
-
+        // Обработчики событий
         document.addEventListener('click', (e) => {
-            if(!e.target.closest('#reset') && !e.target.closest('.menu-btn')) {
-                if(document.getElementById('sidebar').classList.contains('active')) {
-                    toggleMenu();
-                }
-                
+            // Клик по основной кнопке
+            if(e.target.closest('.zikr-button')) {
                 appData.count++;
                 appData.totalCount++;
                 appData.dailyCount++;
                 
-                if(appData.count === 33) {
+                if(appData.count >= 33) {
                     appData.count = 0;
-                    appData.currentZikrIndex = (appData.currentZikrIndex + 1) % SETTINGS.zikrList.length;
+                    appData.currentZikr = (appData.currentZikr + 1) % CONFIG.zikr.length;
                 }
                 
-                updateDisplays();
-                saveData();
+                updateUI();
             }
-        });
 
-        document.getElementById('reset').addEventListener('click', () => {
-            appData.count = 0;
-            appData.currentZikrIndex = 0;
-            updateDisplays();
-            saveData();
-        });
-
-        // Функции статистики
-        function showStatsModal() {
-            document.getElementById('stats-modal').style.display = 'block';
-            updateStats();
-        }
-
-        function hideStatsModal() {
-            document.getElementById('stats-modal').style.display = 'none';
-        }
-
-        function updateStats() {
-            const todayData = appData.history.find(item => item.date === new Date().toISOString().split('T')[0]);
-            document.getElementById('today-count').textContent = todayData ? todayData.count : 0;
-            
-            const weekAgo = new Date();
-            weekAgo.setDate(weekAgo.getDate() - 7);
-            const weekData = appData.history.filter(item => 
-                new Date(item.date) >= weekAgo
-            );
-            const weekTotal = weekData.reduce((sum, item) => sum + item.count, 0);
-            document.getElementById('week-count').textContent = weekTotal;
-            
-            document.getElementById('total-stats-count').textContent = appData.totalCount;
-            updateCharts();
-        }
-
-        function updateCharts() {
-            const dailyBars = document.querySelectorAll('.chart-bar');
-            dailyBars.forEach(bar => {
-                const percent = (appData.dailyCount / 33) * 100;
-                bar.style.setProperty('--width', `${percent}%`);
-            });
-        }
-
-        document.querySelector('.stats-link').addEventListener('click', function(e) {
-            e.preventDefault();
-            showStatsModal();
-        });
-
-        document.querySelector('.close-stats').addEventListener('click', hideStatsModal);
-        document.getElementById('stats-modal').addEventListener('click', function(e) {
-            if(e.target === this) hideStatsModal();
-        });
-
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
-                    if(content.id === `${this.dataset.tab}-stats`) {
-                        content.classList.add('active');
-                    }
-                });
-            });
+            // Закрытие меню при клике вне его
+            if(e.target === elements.overlay) toggleMenu();
         });
 
         // Инициализация
-        tg.ready();
-        tg.expand();
-        updateDisplays();
+        document.querySelector('.menu-btn').addEventListener('click', toggleMenu);
+        document.querySelector('.close-btn').addEventListener('click', toggleMenu);
+        updateUI();
     </script>
 </body>
 </html>
