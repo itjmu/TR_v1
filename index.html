@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тасбих-счётчик</title>
     <style>
-        /* CSS стили объединены в один файл */
-        /* ########## СТИЛИ МЕНЮ ########## */
+        /* Основные стили */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        /* Стили меню */
         .menu-btn {
             position: fixed;
             top: 10px;
@@ -70,201 +84,135 @@
             z-index: 1001;
         }
 
-        /* ########## ОСНОВНЫЕ СТИЛИ ########## */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-image: url('background.jpg');
-            background-size: cover;
-            background-position: center;
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-        }
-
-        .top-link {
+        /* Стили статистики */
+        .stats-modal {
+            display: none;
             position: fixed;
-            top: 10px;
-            right: 5px;
-            color: #fff;
-            text-decoration: none;
-            font-size: 10px;
-            background: rgba(0,0,0,0.5);
-            padding: 8px 15px;
-            border-radius: 20px;
-            z-index: 1000;
-        }
-
-        .top-link:hover {
-            background: rgba(0,0,0,0.3);
-        }
-
-        .level-container {
-            width: 40%;
-            margin-bottom: 15px;
-            margin-left: 20px;
-            margin-right: auto;
-        }
-
-        .level-bar {
-            height: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 9px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .level-progress {
-            height: 100%;
-            background: #66ffCC;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .level-text {
-            position: absolute;
-            top: 40%;
-            left: 40%;
-            transform: translate(-40%, -40%);
-            font-weight: bold;
-            color: #aaa;
-            font-size: 13px;
-        }
-
-        .main-progress-container {
-            width: 90%;
-            margin-bottom: 250px;
-            transition: margin 0.3s;
-        }
-
-        .main-progress-bar {
-            height: 60px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .main-progress {
-            height: 100%;
-            background: #4CAF50;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .main-counter {
-            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 30px;
-            font-weight: bold;
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            z-index: 1003;
+            color: white;
         }
 
-        .zikr-container {
-            margin-bottom: 100px;
-        }
-
-        .zikr-button {
-            font-size: 170px;
-            cursor: pointer;
-            transition: transform 0.2s;
+        .stats-content {
             position: relative;
         }
 
-        .zikr-text {
+        .close-stats {
             position: absolute;
-            font-size: 20px;
-            color: #4CAF50;
-            font-weight: bold;
-            text-shadow: 0 0 5px rgba(76,175,80,0.5);
-            left: 50%;
-            transform: translateX(-50%);
-            transition: font-size 0.2s;
-            width: 150%;
-            max-width: 550px;
-            text-align: center;
-            white-space: normal;
-            word-wrap: break-word;
-            bottom: 260px;
-            padding: 5px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
+            top: -10px;
+            right: -10px;
+            font-size: 28px;
+            cursor: pointer;
         }
 
-        .zikr-button:active {
-            transform: scale(1.1);
+        .stats-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .zikr-button:active .zikr-text {
-            font-size: 22px;
-        }
-
-        .reset-container {
-            position: fixed;
-            left: 20px;
-            bottom: 5%;
-        }
-
-        #reset {
+        .tab {
+            flex: 1;
+            padding: 10px;
+            background: #333;
             border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 24px;
             color: white;
             cursor: pointer;
-            transition: background 0.3s;
+            border-radius: 5px;
         }
 
-        #reset:hover {
-            background: #c82333;
+        .tab.active {
+            background: #4CAF50;
         }
 
-        .total-counter {
-            position: fixed;
-            bottom: 5%;
-            right: 20px;
-            background: rgba(0,0,0,0.4);
-            padding: 10px 20px;
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .chart-bar {
+            height: 20px;
+            background: #333;
             border-radius: 10px;
-            font-size: 14px;
+            margin: 15px 0;
+            position: relative;
         }
 
-        @media (max-width: 500px) {
-            .sidebar {
-                width: 70%;
-                left: -70%;
-            }
-            .sidebar.active ~ .main-progress-container {
-                margin-left: 70%;
-            }
+        .chart-bar::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: #4CAF50;
+            border-radius: 10px;
+            transition: width 0.5s ease;
         }
+
+        /* Остальные стили... */
     </style>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <!-- Меню -->
-    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    <div class="menu-btn">☰</div>
     <div class="sidebar" id="sidebar">
         <div class="menu-header">
             <h3>Меню WebApp</h3>
-            <span onclick="toggleMenu()">×</span>
+            <span class="close-btn">×</span>
         </div>
         <ul class="menu-items">
             <li><a href="https://t.me/Tasbih_rubot?start=m1">📱 Главная</a></li>
             <li><a href="https://t.me/inut_islam">⚙️ Настройки</a></li>
             <li><a href="#profile">🪪 Профиль</a></li>
+            <li><a href="#stats" class="stats-link">📊 Статистика</a></li>
             <li><a href="#qr">❔ Пройти тест 🎁</a></li>
             <li><a href="#help">🆘 Помощь</a></li>
-            <li><a href="#" onclick="resetTotalCount()">🚫 Сбросить общий счёт</a></li> <!-- Новая кнопка -->
+            <li><a href="#" onclick="resetTotalCount()">🚫 Сбросить общий счёт</a></li>
         </ul>
     </div>
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="overlay" id="overlay"></div>
 
+    <!-- Модальное окно статистики -->
+    <div id="stats-modal" class="stats-modal">
+        <div class="stats-content">
+            <span class="close-stats">&times;</span>
+            <div class="stats-tabs">
+                <button class="tab active" data-tab="daily">День</button>
+                <button class="tab" data-tab="weekly">Неделя</button>
+                <button class="tab" data-tab="total">Все время</button>
+            </div>
+            
+            <div id="daily-stats" class="tab-content active">
+                <h3>Ежедневная статистика</h3>
+                <div class="chart-bar"></div>
+                <p>Сегодня: <span id="today-count">0</span></p>
+            </div>
+
+            <div id="weekly-stats" class="tab-content">
+                <h3>Недельная статистика</h3>
+                <div class="chart-bar weekly-chart"></div>
+                <p>За неделю: <span id="week-count">0</span></p>
+            </div>
+
+            <div id="total-stats" class="tab-content">
+                <h3>Общая статистика</h3>
+                <div class="chart-bar total-chart"></div>
+                <p>Всего: <span id="total-stats-count">0</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
     <a href="https://t.me/Tasbih_ru" class="top-link" target="_blank">☪️ Tasbih Reward</a>
 
     <div class="level-container">
@@ -292,8 +240,13 @@
         <button id="reset">⭕</button>
     </div>
 
-    <div class="total-counter">
-        Общий счёт: <span id="total-count">0</span>
+    <div class="counters-container">
+        <div class="daily-counter">
+            Ежедневный счёт: <span id="daily-count">0</span>
+        </div>
+        <div class="total-counter">
+            Общий счёт: <span id="total-count">0</span>
+        </div>
     </div>
 
     <script>
@@ -320,7 +273,10 @@
         let appData = JSON.parse(localStorage.getItem('tasbihData')) || {
             count: 0,
             totalCount: 0,
-            currentZikrIndex: 0
+            dailyCount: 0,
+            currentZikrIndex: 0,
+            lastUpdate: new Date().toISOString().split('T')[0],
+            history: []
         };
 
         const tg = window.Telegram.WebApp;
@@ -333,6 +289,8 @@
             overlay.classList.toggle('active');
         }
 
+        document.querySelector('.menu-btn').addEventListener('click', toggleMenu);
+        document.querySelector('.close-btn').addEventListener('click', toggleMenu);
         document.getElementById('overlay').addEventListener('click', toggleMenu);
 
         // Основная логика
@@ -344,8 +302,16 @@
         }
 
         function updateDisplays() {
+            const today = new Date().toISOString().split('T')[0];
+            if(appData.lastUpdate !== today) {
+                appData.dailyCount = 0;
+                appData.lastUpdate = today;
+                saveData();
+            }
+
             document.getElementById('count').textContent = appData.count;
             document.getElementById('total-count').textContent = appData.totalCount;
+            document.getElementById('daily-count').textContent = appData.dailyCount;
             document.getElementById('zikr-text').textContent = 
                 SETTINGS.zikrList[appData.currentZikrIndex];
             
@@ -370,6 +336,7 @@
                 
                 appData.count++;
                 appData.totalCount++;
+                appData.dailyCount++;
                 
                 if(appData.count === 33) {
                     appData.count = 0;
@@ -388,16 +355,63 @@
             saveData();
         });
 
-        // Функция сброса общего счёта
-        function resetTotalCount() {
-            const isConfirmed = confirm("Вы уверены, что хотите сбросить общий счёт? Это действие нельзя отменить.");
-            if (isConfirmed) {
-                appData.totalCount = 0;
-                updateDisplays();
-                saveData();
-                alert("Общий счёт сброшен.");
-            }
+        // Функции статистики
+        function showStatsModal() {
+            document.getElementById('stats-modal').style.display = 'block';
+            updateStats();
         }
+
+        function hideStatsModal() {
+            document.getElementById('stats-modal').style.display = 'none';
+        }
+
+        function updateStats() {
+            const todayData = appData.history.find(item => item.date === new Date().toISOString().split('T')[0]);
+            document.getElementById('today-count').textContent = todayData ? todayData.count : 0;
+            
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const weekData = appData.history.filter(item => 
+                new Date(item.date) >= weekAgo
+            );
+            const weekTotal = weekData.reduce((sum, item) => sum + item.count, 0);
+            document.getElementById('week-count').textContent = weekTotal;
+            
+            document.getElementById('total-stats-count').textContent = appData.totalCount;
+            updateCharts();
+        }
+
+        function updateCharts() {
+            const dailyBars = document.querySelectorAll('.chart-bar');
+            dailyBars.forEach(bar => {
+                const percent = (appData.dailyCount / 33) * 100;
+                bar.style.setProperty('--width', `${percent}%`);
+            });
+        }
+
+        document.querySelector('.stats-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            showStatsModal();
+        });
+
+        document.querySelector('.close-stats').addEventListener('click', hideStatsModal);
+        document.getElementById('stats-modal').addEventListener('click', function(e) {
+            if(e.target === this) hideStatsModal();
+        });
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                    if(content.id === `${this.dataset.tab}-stats`) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
 
         // Инициализация
         tg.ready();
