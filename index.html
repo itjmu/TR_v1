@@ -20,9 +20,9 @@
 
         .sidebar {
             position: fixed;
-            left: -250px;
+            left: -70%;
             top: 0;
-            width: 250px;
+            width: 70%;
             height: 100%;
             background: rgba(40, 40, 40, 0.95);
             box-shadow: 2px 0 5px rgba(0,0,0,0.2);
@@ -236,11 +236,11 @@
 
         @media (max-width: 768px) {
             .sidebar {
-                width: 80%;
-                left: -80%;
+                width: 70%;
+                left: -70%;
             }
             .sidebar.active ~ .main-progress-container {
-                margin-left: 80%;
+                margin-left: 70%;
             }
         }
     </style>
@@ -258,6 +258,7 @@
             <li><a href="#home">Главная</a></li>
             <li><a href="#settings">Настройки</a></li>
             <li><a href="#profile">Профиль</a></li>
+            <li><a href="#" onclick="resetTotalCount()">Сбросить общий счёт</a></li> <!-- Новая кнопка -->
         </ul>
     </div>
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
@@ -384,6 +385,17 @@
             updateDisplays();
             saveData();
         });
+
+        // Функция сброса общего счёта
+        function resetTotalCount() {
+            const isConfirmed = confirm("Вы уверены, что хотите сбросить общий счёт? Это действие нельзя отменить.");
+            if (isConfirmed) {
+                appData.totalCount = 0;
+                updateDisplays();
+                saveData();
+                alert("Общий счёт сброшен.");
+            }
+        }
 
         // Инициализация
         tg.ready();
