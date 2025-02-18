@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тасбих-счётчик</title>
     <style>
-        /* CSS стили объединены в один файл */
-        /* ########## СТИЛИ МЕНЮ ########## */
+        /* Стили меню */
         .menu-btn {
             position: fixed;
             top: 10px;
-            left: 10px;
-            font-size: 24px;
+            left: 20px;
+            font-size: 30px;
             cursor: pointer;
             z-index: 1001;
             color: white;
@@ -20,15 +19,17 @@
 
         .sidebar {
             position: fixed;
-            left: -250px;
+            left: -60%;
             top: 0;
-            width: 250px;
-            height: 100%;
-            background: rgba(40, 40, 40, 0.95);
+            width: 60%;
+            height: 70%;
+            background: rgba(40, 40, 40, 0.97);
             box-shadow: 2px 0 5px rgba(0,0,0,0.2);
             transition: 0.3s;
             z-index: 1002;
             color: white;
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar.active {
@@ -36,15 +37,17 @@
         }
 
         .menu-header {
-            display: flex;
-            justify-content: space-between;
             padding: 20px;
             border-bottom: 1px solid #555;
+            flex-shrink: 0;
         }
 
         .menu-items {
             list-style: none;
             padding: 0;
+            margin: 0;
+            flex-grow: 1;
+            overflow-y: auto;
         }
 
         .menu-items li a {
@@ -60,29 +63,42 @@
         }
 
         .stats-container {
-            padding: 15px 20px;
-            font-size: 14px;
+            padding: 20px;
             border-top: 1px solid #555;
-            margin-top: 10px;
+            background: rgba(0,0,0,0.2);
         }
 
-        .stats-item {
-            margin: 10px 0;
-            line-height: 1.4;
+        .stat-item {
+            margin: 12px 0;
         }
 
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+        .stat-progress {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin: 5px 0;
+            overflow: hidden;
+        }
+
+        .stat-progress-bar {
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            z-index: 1001;
+            background: #4CAF50;
+            width: 0%;
+            transition: width 0.3s ease;
         }
 
-        /* ########## ОСНОВНЫЕ СТИЛИ ########## */
+        .stat-label {
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        /* Основные стили */
         body {
             font-family: 'Arial', sans-serif;
             background-image: url('background.jpg');
@@ -99,19 +115,20 @@
 
         .top-link {
             position: fixed;
-            top: 10px;
-            right: 5px;
-            color: #fff;
+            top: 15px;
+            right: 10px;
+            color: #9900cc;
             text-decoration: none;
-            font-size: 10px;
-            background: rgba(0,0,0,0.5);
-            padding: 8px 15px;
-            border-radius: 20px;
+            font-size: 13px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 8px;
+            border-radius: 10px;
+            font-weight: bold;
             z-index: 1000;
         }
 
         .top-link:hover {
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.5);
         }
 
         .level-container {
@@ -207,6 +224,10 @@
             border-radius: 10px;
         }
 
+        .zikr-text.hidden {
+            display: none;
+        }
+
         .zikr-button:active {
             transform: scale(1.1);
         }
@@ -248,11 +269,11 @@
 
         @media (max-width: 768px) {
             .sidebar {
-                width: 80%;
-                left: -80%;
+                width: 70%;
+                left: -70%;
             }
             .sidebar.active ~ .main-progress-container {
-                margin-left: 80%;
+                margin-left: 70%;
             }
         }
     </style>
@@ -263,24 +284,47 @@
     <div class="menu-btn" onclick="toggleMenu()">☰</div>
     <div class="sidebar" id="sidebar">
         <div class="menu-header">
-            <h3>Меню</h3>
-            <span onclick="toggleMenu()">×</span>
+            <h3>Меню Тасбиха</h3>
         </div>
+        
         <ul class="menu-items">
+            <li><a href="#" onclick="toggleZikrText()">🔘 Скрыть/Показать текст</a></li>
             <li><a href="#home">Главная</a></li>
             <li><a href="#settings">Настройки</a></li>
             <li><a href="#profile">Профиль</a></li>
-            <li><a href="#" onclick="showStats()">Статистика</a></li>
         </ul>
+
+        <!-- Блок статистики -->
         <div class="stats-container">
-            <div class="stats-item">Уровень: <span id="menu-level">1</span></div>
-            <div class="stats-item">Сегодня: <span id="menu-daily">0</span></div>
-            <div class="stats-item">Всего: <span id="menu-total">0</span></div>
-            <div class="stats-item">Первый вход: <span id="menu-first-date">-</span></div>
+            <div class="stat-item">
+                <div class="stat-label">📅 Сегодня (900)</div>
+                <div class="stat-value" id="stat-daily">0</div>
+                <div class="stat-progress">
+                    <div class="stat-progress-bar" id="daily-progress"></div>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-label">🎯 Общий счет (50,000)</div>
+                <div class="stat-value" id="stat-total">0</div>
+                <div class="stat-progress">
+                    <div class="stat-progress-bar" id="total-progress"></div>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-label">⏱ Последняя активность</div>
+                <div class="stat-value" id="stat-last-active">-</div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-label">📅 Первый вход</div>
+                <div class="stat-value" id="stat-first-date">-</div>
+            </div>
         </div>
     </div>
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
+    <!-- Остальная часть HTML -->
     <a href="https://t.me/Tasbih_ru" class="top-link" target="_blank">☪️ Tasbih Reward</a>
 
     <div class="level-container">
@@ -340,7 +384,9 @@
             currentZikrIndex: 0,
             firstVisitDate: new Date().toISOString(),
             dailyCount: 0,
-            lastVisitDate: new Date().toLocaleDateString()
+            lastVisitDate: new Date().toLocaleDateString(),
+            lastActive: null,
+            isZikrTextVisible: true
         };
 
         const tg = window.Telegram.WebApp;
@@ -348,25 +394,45 @@
         // Инициализация
         tg.ready();
         tg.expand();
-        updateMenuStats();
+        updateStats();
         updateDisplays();
 
         // Функции меню
         function toggleMenu() {
             const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
             sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-            if(sidebar.classList.contains('active')) updateMenuStats();
+            if(sidebar.classList.contains('active')) updateStats();
         }
 
-        // Обновление статистики в меню
-        function updateMenuStats() {
-            document.getElementById('menu-level').textContent = document.getElementById('level').textContent;
-            document.getElementById('menu-daily').textContent = appData.dailyCount;
-            document.getElementById('menu-total').textContent = appData.totalCount;
-            document.getElementById('menu-first-date').textContent = 
-                new Date(appData.firstVisitDate).toLocaleDateString('ru-RU', {
+        // Функция переключения текста
+        function toggleZikrText() {
+            appData.isZikrTextVisible = !appData.isZikrTextVisible;
+            document.getElementById('zikr-text').classList.toggle('hidden', !appData.isZikrTextVisible);
+            toggleMenu();
+            saveData();
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            // Ежедневный прогресс (макс 900)
+            const dailyProgress = (appData.dailyCount / 900) * 100;
+            document.getElementById('daily-progress').style.width = `${Math.min(dailyProgress, 100)}%`;
+            document.getElementById('stat-daily').textContent = appData.dailyCount;
+
+            // Общий прогресс
+            document.getElementById('stat-total').textContent = appData.totalCount;
+            document.getElementById('total-progress').style.width = `${Math.min((appData.totalCount / 50000) * 100, 100)}%`;
+
+            // Даты
+            document.getElementById('stat-first-date').textContent = 
+                new Date(appData.firstVisitDate).toLocaleDateString('ru', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+
+            document.getElementById('stat-last-active').textContent = 
+                new Date().toLocaleDateString('ru', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric',
@@ -377,12 +443,12 @@
 
         // Основная логика
         function saveData() {
+            appData.lastActive = new Date().toISOString();
             localStorage.setItem('tasbihData', JSON.stringify(appData));
+            updateStats();
+            
             if(tg?.sendData) {
-                tg.sendData(JSON.stringify({
-                    user_id: tg.initDataUnsafe.user?.id,
-                    ...appData
-                }));
+                tg.sendData(JSON.stringify(appData));
             }
         }
 
@@ -399,6 +465,7 @@
             document.getElementById('total-count').textContent = appData.totalCount;
             document.getElementById('zikr-text').textContent = 
                 SETTINGS.zikrList[appData.currentZikrIndex];
+            document.getElementById('zikr-text').classList.toggle('hidden', !appData.isZikrTextVisible);
             
             document.querySelector('.main-progress').style.width = 
                 `${(appData.count/33)*100}%`;
@@ -431,7 +498,7 @@
                 }
                 
                 updateDisplays();
-                updateMenuStats();
+                updateStats();
                 saveData();
             }
         });
@@ -442,16 +509,6 @@
             updateDisplays();
             saveData();
         });
-
-        // Показ статистики
-        function showStats() {
-            alert(`📊 Полная статистика:
-• Текущий уровень: ${document.getElementById('level').textContent}
-• Сегодняшний прогресс: ${appData.dailyCount}
-• Всего выполнено: ${appData.totalCount}
-• Дата регистрации: ${new Date(appData.firstVisitDate).toLocaleDateString()}
-• Последняя активность: ${new Date().toLocaleTimeString()}`);
-        }
     </script>
 </body>
 </html>
