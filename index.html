@@ -1,312 +1,33 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тасбих-счётчик</title>
-    <style>
-        /* Стили меню */
-        .menu-btn {
-            position: fixed;
-            top: 10px;
-            left: 20px;
-            font-size: 30px;
-            cursor: pointer;
-            z-index: 1001;
-            color: white;
-            text-shadow: 0 0 3px rgba(0,0,0,0.5);
-        }
-
-        .sidebar {
-            position: fixed;
-            left: -60%;
-            top: 0;
-            width: 60%;
-            height: 70%;
-            background: rgba(40, 40, 40, 0.97);
-            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-            transition: 0.3s;
-            z-index: 1002;
-            color: white;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .menu-header {
-            padding: 1px 20px;
-            border-bottom: 3px solid #555;
-            flex-shrink: 0;
-        }
-
-        .menu-items {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        .menu-items li a {
-            display: block;
-            padding: 10px 30px;
-            text-decoration: none;
-            color: #fff;
-            transition: background 0.3s;
-        }
-
-        .menu-items li a:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .stats-container {
-            padding: 1px 10px;
-            border-top: 1px solid #555;
-            background: rgba(0,0,0,0.2);
-        }
-
-        .stat-item {
-            margin: 10px 0;
-        }
-
-        .stat-progress {
-            height: 8px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
-            margin: 5px 0;
-            overflow: hidden;
-        }
-
-        .stat-progress-bar {
-            height: 100%;
-            background: #4CAF50;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .stat-label {
-            font-size: 13px;
-            color: #aaa;
-            margin-bottom: 3px;
-        }
-
-        .stat-value {
-            font-size: 15px;
-            font-weight: bold;
-        }
-
-        /* Основные стили */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-image: url('background.jpg');
-            background-size: cover;
-            background-position: center;
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-        }
-
-        .top-link {
-            position: fixed;
-            top: 15px;
-            right: 10px;
-            color: #9900cc;
-            text-decoration: none;
-            font-size: 13px;
-            background: rgba(0,0,0,0.2);
-            padding: 8px 8px;
-            border-radius: 10px;
-            font-weight: bold;
-            z-index: 1000;
-        }
-
-        .top-link:hover {
-            background: rgba(0,0,0,0.5);
-        }
-
-        .level-container {
-            width: 40%;
-            margin-bottom: 15px;
-            margin-left: 20px;
-            margin-right: auto;
-        }
-
-        .level-bar {
-            height: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 9px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .level-progress {
-            height: 100%;
-            background: #66ffCC;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .level-text {
-            position: absolute;
-            top: 40%;
-            left: 40%;
-            transform: translate(-40%, -40%);
-            font-weight: bold;
-            color: #aaa;
-            font-size: 13px;
-        }
-
-        .main-progress-container {
-            width: 90%;
-            margin-bottom: 250px;
-            transition: margin 0.3s;
-        }
-
-        .main-progress-bar {
-            height: 60px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .main-progress {
-            height: 100%;
-            background: #4CAF50;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .main-counter {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 30px;
-            font-weight: bold;
-        }
-
-        .zikr-container {
-            margin-bottom: 100px;
-        }
-
-        .zikr-button {
-            font-size: 180px;
-            top: 20%;
-            cursor: pointer;
-            transition: transform 0.2s;
-            position: relative;
-        }
-
-        .zikr-text {
-            position: absolute;
-            font-size: 19px;
-            color: #4CAF50;
-            font-weight: bold;
-            text-shadow: 0 0 5px rgba(76,175,80,0.5);
-            left: 50%;
-            transform: translateX(-50%);
-            transition: font-size 0.2s;
-            width: 140%;
-            max-width: 550px;
-            text-align: center;
-            white-space: normal;
-            word-wrap: break-word;
-            bottom: 300px;
-            padding: 3px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 5px;
-        }
-
-        .zikr-text.hidden {
-            display: none;
-        }
-
-        .zikr-button:active {
-            transform: scale(1.1);
-        }
-
-        .zikr-button:active .zikr-text {
-            font-size: 21px;
-        }
-
-        .reset-container {
-            position: fixed;
-            left: 20px;
-            bottom: 5%;
-        }
-
-        #reset {
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 24px;
-            color: white;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        #reset:hover {
-            background: #c82333;
-        }
-
-        .total-counter {
-            position: fixed;
-            bottom: 5%;
-            right: 20px;
-            background: rgba(0,0,0,0.4);
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-
-        /* Новости */
-        .news-text {
-            padding: 10px;
-            color: #aaa;
-            font-size: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 60%;
-                left: -60%;
-            }
-            .sidebar.active ~ .main-progress-container {
-                margin-left: 70%;
-            }
-        }
-    </style>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8"> <!-- Кодировка UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Адаптивность -->
+    <title>Тасбих-счётчик</title> <!-- Заголовок страницы -->
+    <link rel="stylesheet" href="styles.css"> <!-- Подключение стилей -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script> <!-- Telegram Web App -->
+    <script src="script.js" defer></script> <!-- Подключение JavaScript -->
 </head>
 <body>
-    <!-- Меню -->
+    <!-- Кнопка меню -->
     <div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+    <!-- Боковое меню -->
     <div class="sidebar" id="sidebar">
         <div class="menu-header">
-            <h3>📱 Меню Тасбиха   ⬅️</h3>
+            <h3>Меню Тасбиха</h3> <!-- Заголовок меню -->
         </div>
         
+        <!-- Пункты меню -->
         <ul class="menu-items">
+            <li><a href="#" onclick="toggleZikrText()">🔘 Скрыть/Показать текст</a></li>
+            <li><a href="#" onclick="resetTotalCount()">🔄 Сбросить общий счёт</a></li>
             <li><a href="#home">Главная</a></li>
             <li><a href="#settings">Настройки</a></li>
             <li><a href="#profile">Профиль</a></li>
-            <li><a href="#" onclick="toggleZikrText()">👁️‍🗨️ Скрыть/Показать текст</a></li>
-            <li><a href="#" onclick="resetTotalCount()">🔄 Сбросить общий счёт</a></li>
         </ul>
 
-        <!-- Блок статистики -->
+        <!-- Статистика -->
         <div class="stats-container">
             <!-- Сегодняшний счет -->
             <div class="stat-item">
@@ -349,14 +70,15 @@
 
             <!-- Новости -->
             <div class="stat-item">
-                <div class="news-text">Здесь будет отображатьсяЗдесь будет отображатьсЗдесь будет отображатьсЗдесь будет отображатьсЗдесь будет отображаЗдесь будет отображаться нЗдесь будет отображаться новостовостться новостя новостя новостя новост новости</div>
+                <div class="news-text">Здесь будет отображаться новости</div>
             </div>
         </div>
     </div>
 
-    <!-- Остальная часть HTML -->
-    <a href="https://t.me/Tasbih_ru" class="top-link" target="_blank">☪️ Tasbih Reward</a>
-
+    <!-- Основной интерфейс -->
+    <a href="https://t.me/Tasbih_ru" class="top-link" target="_blank">☪️ Tasbih Reward</a> <!-- Ссылка -->
+    
+    <!-- Уровень -->
     <div class="level-container">
         <div class="level-bar">
             <div class="level-progress"></div>
@@ -364,6 +86,7 @@
         </div>
     </div>
 
+    <!-- Главный счетчик -->
     <div class="main-progress-container">
         <div class="main-progress-bar">
             <div class="main-progress"></div>
@@ -371,6 +94,7 @@
         </div>
     </div>
 
+    <!-- Кнопка зикра -->
     <div class="zikr-container">
         <div class="zikr-button">
             📿
@@ -378,6 +102,7 @@
         </div>
     </div>
 
+    <!-- Кнопка сброса -->
     <div class="reset-container">
         <button id="reset">⭕</button>
     </div>
@@ -386,214 +111,5 @@
     <div class="total-counter">
         Сегодня: <span id="today-count">0</span>
     </div>
-
-    <script>
-        // Настройки
-        const SETTINGS = {
-            zikrList: [
-                "СубhаналЛоh",
-                "АлhамдулилЛah",
-                "Аллоhу Акбар",
-                "Ла илАhа иллалЛоh", 
-                "АстагфирулЛoh", 
-                "СубhаналЛоhи ва баhамдиhиhи", 
-                "Ла илаha илла-лЛоhу ваhдаhу ла шарика лаh. Лаhул мулку ва лаhу-л haмда ва hува ъала кулли шайин Qадир" 
-            ],
-            levels: [
-                {required: 3500, level: 1},
-                {required: 7000, level: 2},
-                {required: 14000, level: 3},
-                {required: 30000, level: 4},
-                {required: 50000, level: 5}
-            ]
-        };
-
-        // Данные приложения
-        let appData = JSON.parse(localStorage.getItem('tasbihData')) || {
-            count: 0,
-            totalCount: 0,
-            currentZikrIndex: 0,
-            firstVisitDate: new Date().toISOString(),
-            dailyCount: 0,
-            yesterdayCount: 0,
-            lastVisitDate: new Date().toLocaleDateString(),
-            lastActive: null,
-            isZikrTextVisible: true
-        };
-
-        const tg = window.Telegram.WebApp;
-
-        // Инициализация
-        tg.ready();
-        tg.expand();
-        updateStats();
-        updateDisplays();
-
-        // Функции меню
-        function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('active');
-            if(sidebar.classList.contains('active')) updateStats();
-        }
-
-        // Функция переключения текста
-        function toggleZikrText() {
-            appData.isZikrTextVisible = !appData.isZikrTextVisible;
-            document.getElementById('zikr-text').classList.toggle('hidden', !appData.isZikrTextVisible);
-            toggleMenu();
-            saveData();
-        }
-
-        // Сброс общего счета
-        function resetTotalCount() {
-            if (appData.totalCount > 100000) {
-                appData.totalCount = 0;
-                updateDisplays();
-                saveData();
-                alert('Общий счет сброшен!');
-            } else {
-                alert('Для сброса нужно более 100000 зикров!');
-            }
-            toggleMenu();
-        }
-
-        // Обновление статистики
-        function updateStats() {
-            // Ежедневный прогресс (макс 900)
-            const dailyProgress = (appData.dailyCount / 900) * 100;
-            document.getElementById('daily-progress').style.width = `${Math.min(dailyProgress, 100)}%`;
-            document.getElementById('stat-daily').textContent = appData.dailyCount;
-
-            // Вчерашний счет
-            document.getElementById('stat-yesterday').textContent = appData.yesterdayCount;
-            document.getElementById('yesterday-progress').style.width = `${Math.min((appData.yesterdayCount / 900) * 100, 100)}%`;
-
-            // Общий счет
-            document.getElementById('stat-total').textContent = appData.totalCount;
-            document.getElementById('total-progress').style.width = `${Math.min((appData.totalCount / 50000) * 100, 100)}%`;
-
-            // Даты
-            document.getElementById('stat-first-date').textContent = 
-                new Date(appData.firstVisitDate).toLocaleDateString('ru', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                });
-
-            document.getElementById('stat-last-active').textContent = 
-                new Date().toLocaleDateString('ru', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-        }
-
-        // Сохранение данных
-        function saveData() {
-            appData.lastActive = new Date().toISOString();
-            localStorage.setItem('tasbihData', JSON.stringify(appData));
-            updateStats();
-            
-            if(tg?.sendData) {
-                tg.sendData(JSON.stringify(appData));
-            }
-        }
-
-        // Обновление интерфейса
-        function updateDisplays() {
-            // Проверка сброса ежедневного счетчика
-            const today = new Date().toLocaleDateString();
-            if(appData.lastVisitDate !== today) {
-                appData.yesterdayCount = appData.dailyCount;
-                appData.dailyCount = 0;
-                appData.lastVisitDate = today;
-            }
-
-            // Обновление значений
-            document.getElementById('count').textContent = appData.count;
-            document.getElementById('today-count').textContent = appData.dailyCount;
-            document.getElementById('zikr-text').textContent = 
-                SETTINGS.zikrList[appData.currentZikrIndex];
-            document.getElementById('zikr-text').classList.toggle('hidden', !appData.isZikrTextVisible);
-            
-            document.querySelector('.main-progress').style.width = 
-                `${(appData.count/33)*100}%`;
-            
-            const levelProgress = calculateLevelProgress();
-            document.querySelector('.level-progress').style.width = `${levelProgress}%`;
-        }
-
-        // Расчет прогресса уровня
-        function calculateLevelProgress() {
-            const currentLevel = SETTINGS.levels.find(l => appData.totalCount < l.required) || {level: 5};
-            document.getElementById('level').textContent = currentLevel.level;
-            const prevLevel = SETTINGS.levels[currentLevel.level-2] || {required: 0};
-            return ((appData.totalCount - prevLevel.required)/(currentLevel.required - prevLevel.required))*100 || 100;
-        }
-
-        // Обработчики событий
-        document.addEventListener('click', (e) => {
-            if(!e.target.closest('#reset') && !e.target.closest('.menu-btn')) {
-                if(document.getElementById('sidebar').classList.contains('active')) {
-                    toggleMenu();
-                }
-                
-                appData.count++;
-                appData.totalCount++;
-                appData.daily
-                                appData.dailyCount++;
-                
-                if(appData.count === 33) {
-                    appData.count = 0;
-                    appData.currentZikrIndex = (appData.currentZikrIndex + 1) % SETTINGS.zikrList.length;
-                }
-                
-                updateDisplays();
-                updateStats();
-                saveData();
-            }
-        });
-
-        // Обработчик кнопки сброса
-        document.getElementById('reset').addEventListener('click', () => {
-            // Минусуем 1 от общего счета если он больше 100
-            if (appData.totalCount > 100) {
-                appData.totalCount--;
-            }
-            appData.count = 0;
-            appData.currentZikrIndex = 0;
-            updateDisplays();
-            saveData();
-        });
-
-        // Функция сброса общего счета
-        function resetTotalCount() {
-            if (appData.totalCount > 100000) {
-                appData.totalCount = 0;
-                updateDisplays();
-                saveData();
-                alert('Общий счет успешно сброшен!');
-            } else {
-                alert('Для сброса необходимо более 100000 зикров!');
-            }
-            toggleMenu();
-        }
-
-        // Инициализация при первом запуске
-        function init() {
-            // Проверяем вчерашний счет при загрузке
-            const today = new Date().toLocaleDateString();
-            if(appData.lastVisitDate !== today) {
-                appData.yesterdayCount = appData.dailyCount;
-                appData.dailyCount = 0;
-                appData.lastVisitDate = today;
-                saveData();
-            }
-        }
-
-        init();
-    </script>
 </body>
 </html>
