@@ -1,18 +1,14 @@
-// Инициализация Telegram Web App
 const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
-// Настройки
 const SETTINGS = {
     zikrList: [
         "Субханаллах",
         "Альхамдулиллях",
         "Аллаху Акбар",
         "Ля иляха илляллах",
-        "Астагфируллах",
-        "Субханаллахи ва бихамдихи",
-        "Ля иляха илляллаху вахдаху ля шарика лях"
+        "Астагфируллах"
     ],
     levels: [
         {required: 100, level: 1},
@@ -23,51 +19,40 @@ const SETTINGS = {
     ]
 };
 
-// Состояние приложения
 let state = JSON.parse(localStorage.getItem('tasbihData')) || {
     count: 0,
-    total: 0,
     daily: 0,
-    yesterday: 0,
+    total: 0,
     currentZikr: 0,
-    level: 1,
     textVisible: true
 };
 
-// Элементы интерфейса
+// Элементы
 const elements = {
     menu: document.getElementById('sidebar'),
     count: document.getElementById('count'),
-    total: document.getElementById('stat-total'),
-    daily: document.getElementById('stat-daily'),
-    yesterday: document.getElementById('stat-yesterday'),
     zikrText: document.getElementById('zikr-text'),
-    mainProgress: document.querySelector('.main-progress'),
+    daily: document.getElementById('stat-daily'),
+    total: document.getElementById('stat-total'),
+    level: document.getElementById('level'),
     dailyProgress: document.getElementById('daily-progress'),
-    totalProgress: document.getElementById('total-progress'),
-    level: document.getElementById('level')
+    totalProgress: document.getElementById('total-progress')
 };
 
 // Основные функции
 function updateUI() {
-    // Счетчики
     elements.count.textContent = state.count;
-    elements.daily.textContent = state.daily;
-    elements.total.textContent = state.total;
-    elements.yesterday.textContent = state.yesterday;
-    
-    // Прогресс-бары
-    elements.mainProgress.style.width = `${(state.count / 33) * 100}%`;
-    elements.dailyProgress.style.width = `${Math.min((state.daily / 900) * 100, 100)}%`;
-    elements.totalProgress.style.width = `${Math.min((state.total / 50000) * 100, 100)}%`;
-    
-    // Уровни
-    const currentLevel = SETTINGS.levels.find(l => state.total < l.required) || SETTINGS.levels[SETTINGS.levels.length - 1];
-    elements.level.textContent = currentLevel.level;
-    
-    // Текст зикра
     elements.zikrText.textContent = SETTINGS.zikrList[state.currentZikr];
     elements.zikrText.classList.toggle('hidden', !state.textVisible);
+    
+    elements.daily.textContent = state.daily;
+    elements.total.textContent = state.total;
+    
+    elements.dailyProgress.style.width = `${Math.min((state.daily / 900)*100, 100)}%`;
+    elements.totalProgress.style.width = `${Math.min((state.total / 50000)*100, 100)}%`;
+    
+    const currentLevel = SETTINGS.levels.find(l => state.total < l.required) || SETTINGS.levels.at(-1);
+    elements.level.textContent = currentLevel.level;
 }
 
 function saveData() {
@@ -76,20 +61,6 @@ function saveData() {
 }
 
 // Обработчики событий
-function handleClick() {
-    if(state.count >= 33) {
-        state.count = 0;
-        state.currentZikr = (state.currentZikr + 1) % SETTINGS.zikrList.length;
-    }
-    
-    state.count++;
-    state.total++;
-    state.daily++;
-    
-    updateUI();
-    saveData();
-}
-
 document.addEventListener('click', (e) => {
     if(e.target.closest('#reset')) {
         state.count = 0;
@@ -99,8 +70,27 @@ document.addEventListener('click', (e) => {
     }
     
     if(!e.target.closest('.menu-btn') && !e.target.closest('.sidebar')) {
-        handleClick();
+        state.count = (state.count + 1) % 33;
+        state.daily++;
+        state.total++;
+        
+        if(state.count === 0) {
+            state.currentZikr = (state.currentZikr + 1) % SETTINGS.zikrList.length;
+        }
+        
+        updateUI();
+        saveData();
     }
+});
+
+let touchStartX = 0;
+document.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+});
+
+document.addEventListener('touchend', (e) => {
+    const deltaX = e.changedTouches[0].clientX - touchStartX;
+    if(Math.abs(deltaX) > 50) handleClick();
 });
 
 // Меню
@@ -108,22 +98,21 @@ function toggleMenu() {
     elements.menu.classList.toggle('active');
 }
 
-function toggleZikrText() {
+function toggleText() {
     state.textVisible = !state.textVisible;
     updateUI();
+    saveData();
     toggleMenu();
 }
 
-function resetTotalCount() {
-    if(confirm("Вы уверены что хотите сбросить весь прогресс?")) {
-        localStorage.removeItem('tasbihData');
+function resetProgress() {
+    if(confirm("Сбросить весь прогресс?")) {
+        localStorage.clear();
         state = {
             count: 0,
-            total: 0,
             daily: 0,
-            yesterday: 0,
+            total: 0,
             currentZikr: 0,
-            level: 1,
             textVisible: true
         };
         updateUI();
