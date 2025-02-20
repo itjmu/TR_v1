@@ -20,6 +20,70 @@ body {
     padding: 20px;
 }
 
+.main-progress-container {
+    width: 90%;
+    margin-bottom: 20px;
+}
+
+.main-progress-bar {
+    height: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-progress {
+    height: 100%;
+    background: #4CAF50;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.main-counter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.stats-container {
+    width: 90%;
+    margin-top: 20px;
+}
+
+.stat-item {
+    margin: 10px 0;
+}
+
+.stat-progress {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    margin: 5px 0;
+    overflow: hidden;
+}
+
+.stat-progress-bar {
+    height: 100%;
+    background: #4CAF50;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 3px;
+}
+
+.stat-value {
+    font-size: 15px;
+    font-weight: bold;
+}
+
 .sidebar.active {
     left: 0;
 }
