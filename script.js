@@ -132,4 +132,4 @@ function initApp() {
 }
 
 // Запуск приложения после полной загрузки
-window.addEventListener('DOMContentLoaded', initApp);
+window.addEventListener('DOMContentLoaded', initApp); 
