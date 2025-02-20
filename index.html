@@ -12,62 +12,42 @@
     <div class="menu-btn" onclick="toggleMenu()">☰</div>
     <div class="sidebar" id="sidebar">
         <div class="menu-header">
-            <h3>📱 Меню Тасбиха ⬅️</h3>
+            <h3>📱 Меню</h3>
             <div class="close-btn" onclick="toggleMenu()">×</div>
         </div>
-        
         <ul class="menu-items">
-            <li><a href="#" onclick="toggleZikrText()">👁️ Скрыть/Показать текст</a></li>
-            <li><a href="#" onclick="resetTotalCount()">🔄 Сбросить прогресс</a></li>
+            <li><a href="#" onclick="toggleText()">👁️ Скрыть/Показать текст</a></li>
+            <li><a href="#" onclick="resetProgress()">🔄 Сбросить прогресс</a></li>
         </ul>
-
         <!-- Статистика -->
         <div class="stats-container">
             <div class="stat-item">
-                <div class="stat-label">📅 Сегодня (Цель: 900)</div>
-                <div class="stat-value" id="stat-daily">0</div>
+                <div class="stat-label">Сегодня: <span id="stat-daily">0</span>/900</div>
                 <div class="stat-progress">
                     <div class="stat-progress-bar" id="daily-progress"></div>
                 </div>
             </div>
             <div class="stat-item">
-                <div class="stat-label">🗓️ Вчера</div>
-                <div class="stat-value" id="stat-yesterday">0</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">📿 Всего (Цель: 50k)</div>
-                <div class="stat-value" id="stat-total">0</div>
+                <div class="stat-label">Всего: <span id="stat-total">0</span>/50000</div>
                 <div class="stat-progress">
                     <div class="stat-progress-bar" id="total-progress"></div>
                 </div>
+            </div>
+            <div class="stat-item">
+                <div class="level-text">Уровень: <span id="level">1</span></div>
             </div>
         </div>
     </div>
 
     <!-- Основной интерфейс -->
-    <div class="level-container">
-        <div class="level-bar">
-            <div class="level-progress"></div>
-            <div class="level-text">Уровень <span id="level">1</span></div>
-        </div>
-    </div>
-
-    <div class="main-progress-container">
-        <div class="main-progress-bar">
-            <div class="main-progress"></div>
-            <div class="main-counter"><span id="count">0</span>/33</div>
-        </div>
-    </div>
-
-    <div class="zikr-container">
-        <div class="zikr-button">
-            📿
+    <div class="main-container">
+        <div class="zikr-container">
             <div class="zikr-text" id="zikr-text">Субханаллах</div>
+            <div class="counter">
+                <span id="count">0</span>/33
+            </div>
         </div>
-    </div>
-
-    <div class="reset-container">
-        <button id="reset">⭕</button>
+        <button id="reset">⭕ Сброс</button>
     </div>
 
     <script src="script.js"></script>
