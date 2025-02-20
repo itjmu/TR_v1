@@ -1,36 +1,60 @@
+/* Базовые стили */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     margin: 0;
     height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #2c3e50;
+    background: #1a1a1a;
     color: white;
+    touch-action: manipulation;
+}
+
+/* Меню */
+.menu-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 1000;
 }
 
 .sidebar {
     position: fixed;
-    left: -250px;
-    width: 250px;
+    left: -300px;
+    top: 0;
+    width: 280px;
     height: 100%;
-    background: #34495e;
+    background: rgba(40, 40, 40, 0.95);
     transition: 0.3s;
     padding: 20px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
 }
 
-.main-progress-container {
-    width: 90%;
-    margin-bottom: 20px;
+.sidebar.active {
+    left: 0;
 }
 
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/* Прогресс-бары */
 .main-progress-bar {
+    width: 90%;
     height: 60px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255,255,255,0.1);
     border-radius: 15px;
     position: relative;
     overflow: hidden;
+    margin: 20px 0;
 }
 
 .main-progress {
@@ -45,25 +69,60 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 30px;
+    font-size: 28px;
     font-weight: bold;
 }
 
+/* Зикр */
+.zikr-container {
+    margin: 30px 0;
+}
+
+.zikr-button {
+    font-size: 80px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.zikr-text {
+    font-size: 18px;
+    margin-top: 15px;
+    color: #4CAF50;
+    text-align: center;
+}
+
+.zikr-text.hidden {
+    display: none;
+}
+
+/* Остальные элементы */
+#reset {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #ff4444;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 20px;
+}
+
 .stats-container {
-    width: 90%;
     margin-top: 20px;
 }
 
 .stat-item {
-    margin: 10px 0;
+    margin: 15px 0;
 }
 
 .stat-progress {
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
     margin: 5px 0;
-    overflow: hidden;
 }
 
 .stat-progress-bar {
@@ -71,29 +130,4 @@ body {
     background: #4CAF50;
     width: 0%;
     transition: width 0.3s ease;
-}
-
-.stat-label {
-    font-size: 13px;
-    color: #aaa;
-    margin-bottom: 3px;
-}
-
-.stat-value {
-    font-size: 15px;
-    font-weight: bold;
-}
-
-.sidebar.active {
-    left: 0;
-}
-
-.main-counter {
-    font-size: 48px;
-    margin: 20px;
-}
-
-#reset {
-    padding: 10px 20px;
-    font-size: 18px;
 }
