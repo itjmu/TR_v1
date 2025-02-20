@@ -3,11 +3,11 @@ from telegram import Update
 
    def start(update: Update, context: CallbackContext):
        update.message.reply_text(
-           "📿 Ваш Тасбих-счётчик: https://itjmu.github.io/Tasbih_rubot/"
+           "📿 Ваш Тасбих-счётчик: https://itjmu.github.io/TR_v1/"
        )
 
    def main():
-       updater = Updater("6902588751:AAFCTn3Dhf43TaPJsGclIDfIBPAsmpQJWzg")
+       updater = Updater(6797867580:AAFjm5Ig4jxMNjQgGt793DIL3A1Gw2uNX_U")
        dispatcher = updater.dispatcher
        dispatcher.add_handler(CommandHandler('start', start))
        updater.start_polling()
