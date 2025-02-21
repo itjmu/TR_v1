@@ -3,26 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тасбих-счётчик</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Тасбих</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="script.js" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            transition: background 0.3s, color 0.3s;
+        }
+        #counter {
+            font-size: 48px;
+            margin: 20px;
+        }
+        button, select {
+            font-size: 24px;
+            padding: 10px 20px;
+            margin: 5px;
+        }
+        .dark {
+            background: #222;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <!-- Меню -->
-    <div class="menu-btn" onclick="toggleMenu()">☰</div>
-    <div class="sidebar" id="sidebar">
-        <div class="menu-header">
-            <h3>Меню</h3>
-            <div class="close-btn" onclick="toggleMenu()">×</div>
-        </div>
-        <div class="stats-container">
-            <!-- Статистика -->
-        </div>
-    </div>
 
-    <!-- Основной интерфейс -->
-    <div class="main-counter">0/33</div>
-    <button id="reset">⭕</button>
+    <h1>Тасбих</h1>
+    <div id="user-info"></div>
+    <div id="counter">0</div>
+    <button id="increment">+1</button>
+    <button id="reset">Сброс</button>
+
+    <br><br>
+    <label for="step">Шаг увеличения:</label>
+    <select id="step">
+        <option value="1">+1</option>
+        <option value="5">+5</option>
+        <option value="10">+10</option>
+    </select>
+
+    <br><br>
+    <button id="close">Закрыть</button>
+
+    <script>
+        let count = localStorage.getItem("tasbihCount") || 0;
+        let step = localStorage.getItem("tasbihStep") || 1;
+
+        const counter = document.getElementById("counter");
+        const incrementBtn = document.getElementById("increment");
+        const resetBtn = document.getElementById("reset");
+        const stepSelect = document.getElementById("step");
+        const closeBtn = document.getElementById("close");
+        const userInfo = document.getElementById("user-info");
+
+        counter.textContent = count;
+        stepSelect.value = step;
+
+        incrementBtn.addEventListener("click", () => {
+            count = parseInt(count) + parseInt(step);
+            counter.textContent = count;
+            localStorage.setItem("tasbihCount", count);
+        });
+
+        resetBtn.addEventListener("click", () => {
+            count = 0;
+            counter.textContent = count;
+            localStorage.setItem("tasbihCount", count);
+        });
+
+        stepSelect.addEventListener("change", () => {
+            step = stepSelect.value;
+            localStorage.setItem("tasbihStep", step);
+        });
+
+        closeBtn.addEventListener("click", () => {
+            Telegram.WebApp.close();
+        });
+
+        // Telegram API
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Разворачиваем приложение
+
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            let user = tg.initDataUnsafe.user;
+            userInfo.innerHTML = `👤 ${user.first_name} ${user.last_name || ""}`;
+        }
+
+        // Настройка темы
+        function applyTheme() {
+            document.body.style.background = tg.themeParams.bg_color || "#fff";
+            document.body.style.color = tg.themeParams.text_color || "#000";
+        }
+
+        applyTheme();
+        tg.onEvent("themeChanged", applyTheme);
+    </script>
+
 </body>
 </html>
