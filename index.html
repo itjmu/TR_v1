@@ -1,31 +1,28 @@
-<!-- Внутри <body> -->
-<div class="main-progress-container">
-    <div class="main-progress-bar">
-        <div class="main-progress"></div>
-        <div class="main-counter"><span id="count">0</span>/33</div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тасбих-счётчик</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <!-- Меню -->
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    <div class="sidebar" id="sidebar">
+        <div class="menu-header">
+            <h3>Меню</h3>
+            <div class="close-btn" onclick="toggleMenu()">×</div>
+        </div>
+        <div class="stats-container">
+            <!-- Статистика -->
+        </div>
     </div>
-</div>
 
-<div class="stats-container">
-    <div class="stat-item">
-        <div class="stat-label">📅 Сегодня (Ежедневный цель 🎯 900)</div>
-        <div class="stat-value" id="stat-daily">0</div>
-        <div class="stat-progress">
-            <div class="stat-progress-bar" id="daily-progress"></div>
-        </div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-label">🗓️ Вчерашний количество зикров</div>
-        <div class="stat-value" id="stat-yesterday">0</div>
-        <div class="stat-progress">
-            <div class="stat-progress-bar" id="yesterday-progress"></div>
-        </div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-label">📿 Всего (Ежемесячный цель 🎯50,000)</div>
-        <div class="stat-value" id="stat-total">0</div>
-        <div class="stat-progress">
-            <div class="stat-progress-bar" id="total-progress"></div>
-        </div>
-    </div>
-</div>
+    <!-- Основной интерфейс -->
+    <div class="main-counter">0/33</div>
+    <button id="reset">Сброс</button>
+</body>
+</html>
