@@ -8,7 +8,7 @@
     /* Стили меню */
     .menu-btn {
       position: fixed;
-      top: 10px;
+      top: 30px; /* раньше было 10px, смещено вниз на 20px */
       left: 20px;
       font-size: 30px;
       cursor: pointer;
@@ -18,10 +18,11 @@
     }
     .sidebar {
       position: fixed;
+      top: 20px; /* смещено вниз на 20px */
       left: -60%;
-      top: 0;
       width: 60%;
-      height: 70%;
+      /* Высоту можно уменьшить с учетом смещения, чтобы она не выходила за пределы экрана */
+      height: calc(70% - 20px);
       background: rgba(10, 30, 40, .99);
       box-shadow: 1px 0 8px rgba(255,255,255,0.99);
       transition: 0.3s;
@@ -101,7 +102,7 @@
     }
     .top-link {
       position: fixed;
-      top: 15px;
+      top: 35px; /* раньше было 15px, смещено вниз */
       right: 10px;
       color: #9900cc;
       text-decoration: none;
@@ -513,7 +514,6 @@
       tg.expand();
       updateStats();
       updateDisplays();
-      // Если данные не актуальны по дате, сбрасываем ежедневный счет
       if (appData.lastVisitDate !== new Date().toLocaleDateString()) {
         appData.yesterdayCount = appData.dailyCount;
         appData.dailyCount = 0;
