@@ -174,7 +174,6 @@
     }
     .zikr-button {
       font-size: 180px;
-      top: 20%;
       cursor: pointer;
       transition: transform 0.2s;
       position: relative;
@@ -326,7 +325,8 @@
     </div>
   </div>
   <div class="zikr-container">
-    <div class="zikr-button">
+    <!-- Назначил id для привязки события клика -->
+    <div class="zikr-button" id="zikr-button">
       📿
       <div class="zikr-text" id="zikr-text">Субханаллах</div>
     </div>
@@ -340,7 +340,7 @@
   </div>
 
   <script>
-    // Настройки
+    // Настройки приложения
     const SETTINGS = {
       zikrList: [
         "СубhаналЛоh",
@@ -361,11 +361,9 @@
     };
 
     const tg = window.Telegram.WebApp;
-
-    // Глобальные данные приложения
     let appData = null;
 
-    // Функция загрузки данных из tg.storage (если доступно) или localStorage
+    // Загрузка данных из tg.storage или localStorage
     async function loadAppData() {
       let data = null;
       if (tg && tg.storage && tg.storage.getItem) {
@@ -391,7 +389,7 @@
       }
     }
 
-    // Функция сохранения данных в tg.storage (если доступно) или localStorage
+    // Сохранение данных
     async function saveData() {
       appData.lastActive = new Date().toISOString();
       const dataStr = JSON.stringify(appData);
@@ -408,25 +406,18 @@
 
     // Обновление статистики
     function updateStats() {
-      // Ежедневный прогресс (макс 900)
       const dailyProgress = (appData.dailyCount / 900) * 100;
       document.getElementById('daily-progress').style.width = `${Math.min(dailyProgress, 100)}%`;
       document.getElementById('stat-daily').textContent = appData.dailyCount;
 
-      // Вчерашний счет
       document.getElementById('stat-yesterday').textContent = appData.yesterdayCount;
       document.getElementById('yesterday-progress').style.width = `${Math.min((appData.yesterdayCount / 900) * 100, 100)}%`;
 
-      // Общий счет
       document.getElementById('stat-total').textContent = appData.totalCount;
       document.getElementById('total-progress').style.width = `${Math.min((appData.totalCount / 50000) * 100, 100)}%`;
 
-      // Даты
-      document.getElementById('stat-first-date').textContent = new Date(appData.firstVisitDate).toLocaleDateString('ru', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
+      document.getElementById('stat-first-date').textContent = new Date(appData.firstVisitDate)
+        .toLocaleDateString('ru', { day: 'numeric', month: 'long', year: 'numeric' });
       document.getElementById('stat-last-active').textContent = new Date().toLocaleDateString('ru', {
         day: 'numeric',
         month: 'long',
@@ -436,23 +427,19 @@
       });
     }
 
-    // Обновление интерфейса
+    // Обновление отображения
     function updateDisplays() {
-      // Проверка сброса ежедневного счетчика
       const today = new Date().toLocaleDateString();
       if (appData.lastVisitDate !== today) {
         appData.yesterdayCount = appData.dailyCount;
         appData.dailyCount = 0;
         appData.lastVisitDate = today;
       }
-
       document.getElementById('count').textContent = appData.count;
       document.getElementById('today-count').textContent = appData.dailyCount;
       document.getElementById('zikr-text').textContent = SETTINGS.zikrList[appData.currentZikrIndex];
       document.getElementById('zikr-text').classList.toggle('hidden', !appData.isZikrTextVisible);
-
       document.querySelector('.main-progress').style.width = `${(appData.count / 33) * 100}%`;
-
       const levelProgress = calculateLevelProgress();
       document.querySelector('.level-progress').style.width = `${levelProgress}%`;
     }
@@ -465,14 +452,14 @@
       return ((appData.totalCount - prevLevel.required) / (currentLevel.required - prevLevel.required)) * 100 || 100;
     }
 
-    // Функция переключения меню
+    // Переключение меню
     function toggleMenu() {
       const sidebar = document.getElementById('sidebar');
       sidebar.classList.toggle('active');
       if (sidebar.classList.contains('active')) updateStats();
     }
 
-    // Функция переключения отображения текста зикра
+    // Переключение отображения текста зикра
     function toggleZikrText() {
       appData.isZikrTextVisible = !appData.isZikrTextVisible;
       document.getElementById('zikr-text').classList.toggle('hidden', !appData.isZikrTextVisible);
@@ -480,7 +467,7 @@
       saveData();
     }
 
-    // Функция сброса общего счета
+    // Сброс общего счета
     function resetTotalCount() {
       if (appData.totalCount > 100000) {
         appData.totalCount = 0;
@@ -493,39 +480,23 @@
       toggleMenu();
     }
 
-    // Инициализация при первом запуске
-    function init() {
-      const today = new Date().toLocaleDateString();
-      if (appData.lastVisitDate !== today) {
-        appData.yesterdayCount = appData.dailyCount;
-        appData.dailyCount = 0;
-        appData.lastVisitDate = today;
-        saveData();
+    // Обработчик клика только на кнопке зикра
+    document.getElementById('zikr-button').addEventListener('click', () => {
+      appData.count++;
+      appData.totalCount++;
+      appData.dailyCount++;
+      if (appData.count === 33) {
+        appData.count = 0;
+        appData.currentZikrIndex = (appData.currentZikrIndex + 1) % SETTINGS.zikrList.length;
       }
-    }
-
-    // Обработчик кликов по документу (если клик не на кнопке меню или сброса)
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#reset') && !e.target.closest('.menu-btn')) {
-        if (document.getElementById('sidebar').classList.contains('active')) {
-          toggleMenu();
-        }
-        appData.count++;
-        appData.totalCount++;
-        appData.dailyCount++;
-
-        if (appData.count === 33) {
-          appData.count = 0;
-          appData.currentZikrIndex = (appData.currentZikrIndex + 1) % SETTINGS.zikrList.length;
-        }
-        updateDisplays();
-        updateStats();
-        saveData();
-      }
+      updateDisplays();
+      updateStats();
+      saveData();
     });
 
-    // Обработчик кнопки сброса
-    document.getElementById('reset').addEventListener('click', () => {
+    // Обработчик кнопки сброса (остановка всплытия клика)
+    document.getElementById('reset').addEventListener('click', (e) => {
+      e.stopPropagation();
       if (appData.totalCount > 100) {
         appData.totalCount--;
       }
@@ -535,14 +506,20 @@
       saveData();
     });
 
-    // Инициализация приложения после загрузки данных
+    // Инициализация приложения
     (async function initApp() {
       await loadAppData();
       tg.ready();
       tg.expand();
       updateStats();
       updateDisplays();
-      init();
+      // Если данные не актуальны по дате, сбрасываем ежедневный счет
+      if (appData.lastVisitDate !== new Date().toLocaleDateString()) {
+        appData.yesterdayCount = appData.dailyCount;
+        appData.dailyCount = 0;
+        appData.lastVisitDate = new Date().toLocaleDateString();
+        saveData();
+      }
     })();
   </script>
 </body>
