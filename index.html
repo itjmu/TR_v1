@@ -1,109 +1,104 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tasbih Reward</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="script.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasbih Reward</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-    <!-- Меню -->
-    <div class="menu-btn" onclick="toggleMenu()">☰</div>
-<!-- Внутри блока меню (в файле index.html) -->
-<div class="sidebar" id="sidebar">
-    <div class="menu-header">
-        <h3>📱 Меню Тасбиха   ⬅️</h3>
-        <div class="close-btn" onclick="toggleMenu()">×</div> <!-- Кнопка закрытия -->
+  <!-- Кнопка открытия меню -->
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+  
+  <!-- Боковая панель меню -->
+  <div class="sidebar" id="sidebar">
+        <!-- Ряд кнопок: сброс, переключение текста и смена языка -->
+    <div class="menu-buttons-row">
+      <button id="reset-btn" onclick="resetTotalCount()">🔄</button>
+      <button id="toggle-text-btn" onclick="toggleZikrText()">👁️‍🗨️</button>
+      <button id="lang-toggle-btn" onclick="toggleLanguage()">RU</button>
     </div>
-    
+    <!-- Список с кнопкой "Главная" -->
     <ul class="menu-items">
-        <li><a href="#home">Главная</a></li>
-        <li><a href="#settings">Настройки</a></li>
-        <li><a href="#profile">Профиль</a></li>
-        <li><a href="#" onclick="toggleZikrText()">👁️‍🗨️ Скрыть/Показать текст</a></li>
-        <li><a href="#" onclick="resetTotalCount()">🔄 Сбросить общий счёт</a></li>
+      <li><a href="t.me/Tasbih_ru" id="menu-home">📱 Главная</a></li>
+      <li><a href="t.me/Tasbih_ru" id="menu-reward">🎁 Награды</a></li>
+      <li><a href="t.me/Tasbih_ru" id="menu-help">🆘 Помощь</a></li>
     </ul>
-        <!-- Блок статистики -->
-        <div class="stats-container">
-            <!-- Сегодняшний счет -->
-            <div class="stat-item">
-                <div class="stat-label">📅 Сегодня (Ежедневный цель 🎯 900)</div>
-                <div class="stat-value" id="stat-daily">0</div>
-                <div class="stat-progress">
-                    <div class="stat-progress-bar" id="daily-progress"></div>
-                </div>
-            </div>
-
-            <!-- Вчерашний счет -->
-            <div class="stat-item">
-                <div class="stat-label">🗓️ Вчерашний количество зикров</div>
-                <div class="stat-value" id="stat-yesterday">0</div>
-                <div class="stat-progress">
-                    <div class="stat-progress-bar" id="yesterday-progress"></div>
-                </div>
-            </div>
-
-            <!-- Общий счет -->
-            <div class="stat-item">
-                <div class="stat-label">📿 Всего (Ежемесячный цель 🎯50K)</div>
-                <div class="stat-value" id="stat-total">0</div>
-                <div class="stat-progress">
-                    <div class="stat-progress-bar" id="total-progress"></div>
-                </div>
-            </div>
-
-            <!-- Последняя активность -->
-            <div class="stat-item">
-                <div class="stat-label">⏱ Последняя активность</div>
-                <div class="stat-value" id="stat-last-active">-</div>
-            </div>
-
-            <!-- Первый вход -->
-            <div class="stat-item">
-                <div class="stat-label">📅 Первый вход</div>
-                <div class="stat-value" id="stat-first-date">-</div>
-            </div>
-
-            <!-- Новости -->
-            <div class="stat-item">
-                <div class="news-text">Здесь будет отоброжатся хадиси Пророка (с.а.в.)</div>
-            </div>
+    <!-- Блок статистики -->
+    <div class="stats-container">
+      <!-- Сегодняшний счет -->
+      <div class="stat-item">
+        <div class="stat-label" id="daily-label">📅 Сегодня (Ежедневный цель 🎯 900)</div>
+        <div class="stat-value" id="stat-daily">0</div>
+        <div class="stat-progress">
+          <div class="stat-progress-bar" id="daily-progress"></div>
         </div>
-    </div>
-
-    <!-- Остальная часть HTML -->
-    <a href="ET.html" class="top-link" target="_blank">🪫</a>
-
-    <div class="level-container">
-        <div class="level-bar">
-            <div class="level-progress"></div>
-            <div class="level-text">Уровень <span id="level">1</span> из 5</div>
+      </div>
+      <!-- Вчерашний счет -->
+      <div class="stat-item">
+        <div class="stat-label" id="yesterday-label">🗓️ Вчерашний счет</div>
+        <div class="stat-value" id="stat-yesterday">0</div>
+        <div class="stat-progress">
+          <div class="stat-progress-bar" id="yesterday-progress"></div>
         </div>
-    </div>
-
-    <div class="main-progress-container">
-        <div class="main-progress-bar">
-            <div class="main-progress"></div>
-            <div class="main-counter"><span id="count">0</span>/33</div>
+      </div>
+      <!-- Общий счет -->
+      <div class="stat-item">
+        <div class="stat-label" id="total-label">📿 Всего (Ежемесячный цель 🎯50K)</div>
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-progress">
+          <div class="stat-progress-bar" id="total-progress"></div>
         </div>
+      </div>
+      <!-- Последняя активность -->
+      <div class="stat-item">
+        <div class="stat-label" id="last-active-label">⏱ Последняя активность</div>
+        <div class="stat-value" id="stat-last-active">-</div>
+      </div>
+      <!-- Первый вход -->
+      <div class="stat-item">
+        <div class="stat-label" id="first-date-label">📅 Первый вход</div>
+        <div class="stat-value" id="stat-first-date">-</div>
+      </div>
+      <!-- Новости -->
+      <div class="stat-item">
+        <div class="news-text" id="news-text">Здесь будут отображаться хадисы Пророка (с.а.в.)</div>
+      </div>
     </div>
+  </div>
 
-    <div class="zikr-container">
-        <div class="zikr-button">
-            📿
-            <div class="zikr-text" id="zikr-text">Субханаллах</div>
-        </div>
-    </div>
+  <!-- Остальной интерфейс приложения -->
+  <a href="t.me/Tasbih_ru" class="top-link" target="_blank">☪️ Tasbih Reward</a>
 
-    <div class="reset-container">
-        <button id="reset">⭕</button>
+  <div class="level-container">
+    <div class="level-bar">
+      <div class="level-progress"></div>
+      <div class="level-text" id="level-text">Уровень <span id="level">1</span> из 5</div>
     </div>
+  </div>
 
-    <!-- Счетчик за сегодня -->
-    <div class="total-counter">
-        Сегодня: <span id="today-count">0</span>
+  <div class="main-progress-container">
+    <div class="main-progress-bar">
+      <div class="main-progress"></div>
+      <div class="main-counter"><span id="count">0</span>/33</div>
     </div>
+  </div>
+
+  <!-- Контейнер зикра: при переключении скрывается весь блок -->
+  <div class="zikr-container" id="zikr-container">
+    <div class="zikr-button">
+      📿
+      <div class="zikr-text" id="zikr-text">Субханаллах</div>
+    </div>
+  </div>
+
+  <div class="reset-container">
+    <button id="reset">⭕</button>
+  </div>
+
+  <!-- Счетчик за сегодня -->
+  <div class="total-counter">Сегодня: <span id="today-count">0</span></div>
 </body>
 </html>
