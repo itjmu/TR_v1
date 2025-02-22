@@ -97,8 +97,22 @@
         Telegram.WebApp.sendData(JSON.stringify({ count, globalCount }));
       }
     });
-document.getElementById('batteryButton').addEventListener('click', function() {
-    window.location.href = 'index.html'; // Переход на index.html
+ document.getElementById('batteryButton').addEventListener('click', function() {
+      let currentPage = localStorage.getItem('currentPage');
+
+      if (currentPage === 'index') {
+          localStorage.setItem('currentPage', 'ET');
+          window.location.href = 'ET.html'; // Переключение на другой файл
+      } else {
+          localStorage.setItem('currentPage', 'index');
+          window.location.href = 'index.html'; // Возврат на главную страницу
+      }
+  });
+
+  // Устанавливаем начальное значение, если его нет
+  if (!localStorage.getItem('currentPage')) {
+      localStorage.setItem('currentPage', 'index');
+  }
   });
     // Обработчик кнопки сброса (обнуляет только основной счёт)
     resetButton.addEventListener('click', function(event) {
