@@ -4,7 +4,7 @@ let appData = JSON.parse(localStorage.getItem('tasbihData')) || { count: 0, tota
 
 const tg = window.Telegram.WebApp; const SWIPE_THRESHOLD = 10; const ACTION_INTERVAL = 300; let lastActionTime = 0;
 
-tg.ready(); tg.MainButton.disable(); tg.expand(); tg.enableClosingConfirmation(); tg.expand(); updateStats(); updateDisplays();
+tg.ready(); tg.onEvent('viewportChanged', () => tg.expand()); tg.MainButton.disable(); tg.expand(); tg.enableClosingConfirmation(); tg.expand(); updateStats(); updateDisplays();
 
 function toggleMenu() { const sidebar = document.getElementById('sidebar'); sidebar.classList.toggle('active'); if (sidebar.classList.contains('active')) updateStats(); }
 
@@ -44,5 +44,5 @@ document.getElementById('reset').addEventListener('click', () => { if (appData.t
 
 function init() { const today = new Date().toLocaleDateString(); if (appData.lastVisitDate !== today) { appData.yesterdayCount = appData.dailyCount; appData.dailyCount = 0; appData.lastVisitDate = today; saveData(); } }
 
-init();
+init(); tg.expand();
 
