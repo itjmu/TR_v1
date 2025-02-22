@@ -62,6 +62,22 @@ function toggleZikrText() {
     toggleMenu();
     saveData();
 }
+  document.getElementById('batteryButton').addEventListener('click', function() {
+      let currentPage = localStorage.getItem('currentPage');
+
+      if (currentPage === 'index') {
+          localStorage.setItem('currentPage', 'ET');
+          window.location.href = 'ET.html'; // Переключение на другой файл
+      } else {
+          localStorage.setItem('currentPage', 'index');
+          window.location.href = 'index.html'; // Возврат на главную страницу
+      }
+  });
+
+  // Устанавливаем начальное значение, если его нет
+  if (!localStorage.getItem('currentPage')) {
+      localStorage.setItem('currentPage', 'index');
+  }
 
 // Сброс общего счета
 function resetTotalCount() {
