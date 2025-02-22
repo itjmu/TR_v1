@@ -4,7 +4,7 @@ let appData = JSON.parse(localStorage.getItem('tasbihData')) || { count: 0, tota
 
 const tg = window.Telegram.WebApp; const SWIPE_THRESHOLD = 10; const ACTION_INTERVAL = 300; let lastActionTime = 0;
 
-tg.ready(); tg.expand(); updateStats(); updateDisplays();
+tg.ready(); tg.enableClosingConfirmation(); tg.expand(); updateStats(); updateDisplays();
 
 function toggleMenu() { const sidebar = document.getElementById('sidebar'); sidebar.classList.toggle('active'); if (sidebar.classList.contains('active')) updateStats(); }
 
