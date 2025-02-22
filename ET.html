@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тасбих</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Полноэкранное тёмное оформление */
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .counter {
+      font-size: 5.2em; /* Увеличено на 30% */
+      font-weight: bold;
+      color: #f5f5f5;
+    }
+    /* Общий счёт в правом нижнем углу */
+    #globalCounter {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      font-size: 1.5em;
+      color: #cccccc;
+    }
+    /* Кнопка сброса в левом нижнем углу */
+    #reset {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      padding: 8px 12px;
+      font-size: 1em;
+      z-index: 1000;
+    }
+    /* Кнопка 🔋 в верхнем правом углу */
+    #batteryButton {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      font-size: 2em;
+      background: none;
+      border: none;
+      color: #f5f5f5;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Кнопка 🔋 в верхнем правом углу -->
+<button id="batteryButton" style="position: fixed; top: 10px; right: 10px; background: none; border: none; font-size: 24px;">🔋</button> 
+<!-- Основной счётчик -->  <div id="counter" class="counter">0</div>  <!-- Общий счёт, который не обнуляется -->  <div id="globalCounter">Общий счёт: 0</div>
+  <!-- Кнопка сброса для сброса основного счёта -->
+  <button id="reset" class="btn btn-danger">Сброс</button>  <script>
+    let count = localStorage.getItem('count') ? parseInt(localStorage.getItem('count')) : 0;
+    let globalCount = localStorage.getItem('globalCount') ? parseInt(localStorage.getItem('globalCount')) : 0;
+    const counterDisplay = document.getElementById('counter');
+    const globalCounterDisplay = document.getElementById('globalCounter');
+    const resetButton = document.getElementById('reset');
+    const batteryButton = document.getElementById('batteryButton');
+    let lastClickTime = 0; // Для интервала между кликами
+
+    function updateDisplay() {
+      counterDisplay.textContent = count;
+      globalCounterDisplay.textContent = 'Общий счёт: ' + globalCount;
+    }
+
+    function saveData() {
+      localStorage.setItem('count', count);
+      localStorage.setItem('globalCount', globalCount);
+    }
+
+    updateDisplay();
+
+    // Обработчик кликов (с интервалом 200мс)
+    document.addEventListener('click', function(event) {
+      if (event.target.closest('#reset') || event.target.closest('#batteryButton')) return;
+      let now = Date.now();
+      if (now - lastClickTime < 200) return;
+      lastClickTime = now;
+      
+      count++;
+      globalCount++;
+      updateDisplay();
+      saveData();
+      
+      if (window.Telegram && Telegram.WebApp) {
+        Telegram.WebApp.sendData(JSON.stringify({ count, globalCount }));
+      }
+    });
+document.getElementById('batteryButton').addEventListener('click', function() {
+    window.location.href = 'index.html'; // Переход на index.html
+  });
+    // Обработчик кнопки сброса (обнуляет только основной счёт)
+    resetButton.addEventListener('click', function(event) {
+      event.stopPropagation();
+      count = 0;
+      updateDisplay();
+      saveData();
+    });
+    if (window.Telegram && Telegram.WebApp) {
+      Telegram.WebApp.ready();
+    }
+  </script></body>
+</html>
