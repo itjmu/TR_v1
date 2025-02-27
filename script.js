@@ -106,18 +106,24 @@ const ACTION_INTERVAL = 300;
 let lastActionTime = 0;
 
 tg.ready();
+tg.onEvent('auth', setUserName);
 tg.expand();
 updateStats();
 updateDisplays();
 updateLanguage();
 
 function setUserName() {
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+    if (tg.initDataUnsafe?.user?.first_name) {
         document.getElementById('user-name').textContent = `Привет, ${tg.initDataUnsafe.user.first_name}!`;
     } else {
         document.getElementById('user-name').textContent = "Привет, гость!";
     }
 }
+
+// Устанавливаем имя после загрузки Telegram WebApp
+tg.ready();
+setUserName();
+tg.onEvent('auth', setUserName);
 
 // Функция показа/скрытия бокового меню
 function toggleMenu() {
