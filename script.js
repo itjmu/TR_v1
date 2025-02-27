@@ -111,6 +111,14 @@ updateStats();
 updateDisplays();
 updateLanguage();
 
+function setUserName() {
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        document.getElementById('user-name').textContent = `Привет, ${tg.initDataUnsafe.user.first_name}!`;
+    } else {
+        document.getElementById('user-name').textContent = "Привет, гость!";
+    }
+}
+
 // Функция показа/скрытия бокового меню
 function toggleMenu() {
   const sidebar = document.getElementById('sidebar');
