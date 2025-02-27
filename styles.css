@@ -41,6 +41,22 @@
   left: 0;
 }
 
+#user-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #007bff, #6610f2);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px auto;
+    width: 80%;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 /* Стили для списка меню и ряда кнопок */
 .menu-items {
   list-style: none;
